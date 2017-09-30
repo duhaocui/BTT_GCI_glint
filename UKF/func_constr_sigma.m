@@ -1,6 +1,6 @@
 function [X, W_m, W_c] = func_constr_sigma(m, P, tr_param)
 % ref. [1]: Optimal Filterign with Kalman Filters and Smoothers, P29
-% ref. [2]: ±´Ò¶Ë¹ÂË²¨
+% ref. [2]: ??????????
 
 n = length(m);
 alpha = tr_param{1};
@@ -13,7 +13,10 @@ lambda = alpha^2 * (n + kappa) - n;
 % construct sigma points
 X = zeros(n, 2 * n + 1);
 X(:, 1) = m;
-P_sqrt = chol(P)';
+
+% P_sqrt = chol(P)';
+P_sqrt = schol(P)';
+
 for i = 1 : n
     X(:, i + 1) = m + sqrt(n + lambda) * P_sqrt(:, i);
     X(:, i + 1 + n) = m - sqrt(n + lambda) * P_sqrt(:, i);

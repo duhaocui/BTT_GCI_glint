@@ -73,9 +73,11 @@ for i = 1 : nSteps
         P_upd = shiftdim(P_UKF(i - 1, :, :) );
     end
     % predict
+    disp('predict')
     [x_pred, P_pred] = func_UKF_predict(x_upd, P_upd, @func_BTT_dyn, dyn_param, tr_param, Q);
     
     % update
+    disp('update')
     z = (Z(i, :) )';  
     [x_upd, P_upd] = func_UKF_update(x_pred, P_pred, z, @func_rang_bear_meas, meas_param, tr_param, R);
     

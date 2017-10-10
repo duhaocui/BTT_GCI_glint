@@ -25,7 +25,7 @@ for i = 1 : n_x
 end
 
 for i = 1 : n_x
-    W(i + 1 + n_x) = W(1 + i);
+    W(i + 1 + n_x) = W(i + 1);
 end
 
 

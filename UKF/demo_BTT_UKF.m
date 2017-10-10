@@ -34,13 +34,9 @@ meas_param{4} = y_R;
 
 %% UKF
 beta_UKF = beta_tgt;
-n = size(F, 1);
-alpha = 1;
-beta = 0;
-kappa = 3 - n;
-tr_param{1} = alpha;
-tr_param{2} = beta;
-tr_param{3} = kappa;
+n_x = size(F, 1);
+kappa = 3 - n_x;
+tr_param{1} = kappa;
 
 %% main function
 [mse_px, mse_py] = func_BTT_UKF(T, dyn_param, q, meas_param, sigma_r, sigma_theta, tr_param, beta_UKF, DEMO_FLAG);

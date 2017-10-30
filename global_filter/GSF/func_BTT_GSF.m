@@ -1,4 +1,4 @@
-function [mse_px, mse_py] = func_BTT_GSF(dyn_param, meas_param, ut_param, DEMO_FLAG)
+function [mse_px, mse_py] = func_BTT_GSF(T, Q_cell, R_cell, epsilon_w, epsilon_v, dyn_param, meas_param, ut_param, DEMO_FLAG)
 
 %% target
 % read dynamical parameters
@@ -6,16 +6,8 @@ g = dyn_param{1};
 beta_tgt = dyn_param{2};
 F = dyn_param{3};
 G = dyn_param{4};
-T = dyn_param{5};
-q = dyn_param{6};
-epsilon_w = dyn_param{7};
 % prepare
 nSteps = 120 / T;
-Theta = [T^3 / 3, T^2 / 2; T^2 / 2, T];
-assert(length(q) == 2)
-Q = cell(2, 1);
-Q{1} = q(1) * blkdiag(Theta, Theta);
-Q{2} = q(2) * blkdiag(Theta, Theta);
 % initial target state
 x0_tgt = [232 * 1e3; 2290 * cosd(190); 88 * 1e3; 2290 * sind(190)];
 nStates = length(x0_tgt);
@@ -30,7 +22,7 @@ for i = 1 : nSteps
     end
     % process noise (Gaussian mixture model)
     mu_w = zeros(2, size(F, 1) );
-    sigma_w = cat(3, Q{1}, Q{2} );
+    sigma_w = cat(3, Q_cell{1}, Q_cell{2} );
     p_w = [(1 - epsilon_w), epsilon_w];
     gm_w = gmdistribution(mu_w, sigma_w, p_w);
     w = (random(gm_w) )';
@@ -42,9 +34,6 @@ for i = 1 : nSteps
 end
 
 %% measurement
-% read measuremtn parameters
-R_cell = meas_param{3};
-epsilon_v = meas_param{4};
 % initial measurement
 Z = zeros(nSteps, 2);
 % update measurement

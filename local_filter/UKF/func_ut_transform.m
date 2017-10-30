@@ -12,7 +12,10 @@ function [m_tfr, P_tfr, P_cov_tfr] = func_ut_transform(m, P, func_handle, func_p
 %   P_cov_tfr - transformed cross-covariance of x and y 
 
 % construct sigma points
-[X, W_m, W_c] = func_constr_sigma(m, P, ut_param);
+sigma = func_constr_sigma(m, P, ut_param);
+X = sigma.X;
+W_m = sigma.W_m;
+W_c = sigma.W_c;
 
 % calculate `Y` (propagate through the nonlinear function `g`)
 if ischar(func_handle) || isa(func_handle,'function_handle')

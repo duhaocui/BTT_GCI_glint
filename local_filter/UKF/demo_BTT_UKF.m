@@ -37,6 +37,7 @@ meas_param{2} = y_s;
 %% unscented transform parameters
 alpha = 1;
 beta = 0;
+% n_x = size(F, 1);
 % kappa = 3 - n_x;
 kappa = 0;
 ut_param{1} = alpha;

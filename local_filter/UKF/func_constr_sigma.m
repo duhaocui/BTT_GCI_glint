@@ -12,7 +12,8 @@ lambda = alpha^2 * (n_x + kappa) - n_x;
 
 %% calculate sigma points
 % initial
-X = zeros(n_x, 2 * n_x + 1);
+L = 2 * n_x + 1;
+X = zeros(n_x, L);
 % calcualte
 tmp = chol( (n_x + lambda) * P, 'lower');
 
@@ -29,14 +30,14 @@ end
 
 %% calcualte W_m
 % initial
-W_m = zeros(2 * n_x + 1, 1);
+W_m = zeros(L, 1);
 % calculate
 W_m(1) = lambda / (n_x + lambda);
 W_m(2 : end) = 1 / (2 * (n_x + lambda) );
 
 %% calculate W_c
 % initial
-W_c = zeros(2 * n_x + 1, 1);
+W_c = zeros(L, 1);
 % calculate
 W_c(1) = lambda / (n_x + lambda) + (1 - alpha^2 + beta);
 W_c(2 : end) = 1 / (2 * (n_x + lambda) );

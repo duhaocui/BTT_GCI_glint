@@ -11,7 +11,7 @@ W_c = sigma_pred.W_c;
 % unscented transform
 X_ut = func_ut_transform(X_in, func_handle, meas_param);
 
-%% calculate ``, `` and ``
+%% calculate `m_ut`, `P_ut` and `P_cov_ut`
 L = size(X_in, 2);
 % calculate `m_ut`
 m_ut = [];

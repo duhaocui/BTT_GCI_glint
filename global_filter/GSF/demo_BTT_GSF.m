@@ -17,7 +17,7 @@ G = [T^2 / 2, 0
     T,       0;
     0,       T^2 / 2;
     0,       T];
-epsilon_w = 0.5;
+epsilon_w = 0.4;
 dyn_param{1} = g;
 dyn_param{2} = beta_tgt;
 dyn_param{3} = F;
@@ -35,13 +35,13 @@ r_range = [10; 1];
 r_theta = [0.05; 0.005];
 assert(length(r_range) == 2)
 assert(length(r_theta) == 2)
-R = cell(2, 1);
-R{1} = diag([(r_range(1) )^2, (r_theta(1) )^2]);
-R{2} = diag([(r_range(2) )^2, (r_theta(2) )^2]);
-epsilon_v = 0.5;
+R_cell = cell(2, 1);
+R_cell{1} = diag([(r_range(1) )^2, (r_theta(1) )^2]);
+R_cell{2} = diag([(r_range(2) )^2, (r_theta(2) )^2]);
+epsilon_v = 0.6;
 meas_param{1} = x_s;
 meas_param{2} = y_s;
-meas_param{3} = R;
+meas_param{3} = R_cell;
 meas_param{4} = epsilon_v;
 
 %% unscented transform parameters

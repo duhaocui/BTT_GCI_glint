@@ -1,4 +1,4 @@
-function [X, W_m, W_c] = func_constr_sigma(m, P, ut_param)
+function sigma = func_constr_sigma(m, P, ut_param)
 % ref. [1]: Gaussian sum unscented kalman filter with adaptive scaling parameters
 % ref. [2]: Radar data processing with applications (He You), P72
 
@@ -34,9 +34,15 @@ W_m = zeros(2 * n_x + 1, 1);
 W_m(1) = lambda / (n_x + lambda);
 W_m(2 : end) = 1 / (2 * (n_x + lambda) );
 
-% calculate W_c
+%% calculate W_c
 % initial
 W_c = zeros(2 * n_x + 1, 1);
 % calculate
 W_c(1) = lambda / (n_x + lambda) + (1 - alpha^2 + beta);
 W_c(2 : end) = 1 / (2 * (n_x + lambda) );
+
+%% construct sigma
+sigma = struct;
+sigma.X = X;
+sigma.W_m = W_m;
+sigma.W_c = W_c;

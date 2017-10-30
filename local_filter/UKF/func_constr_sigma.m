@@ -14,14 +14,8 @@ lambda = alpha^2 * (n_x + kappa) - n_x;
 % initial
 L = 2 * n_x + 1;
 X = zeros(n_x, L);
-% calcualte
+% calcualte X
 tmp = chol( (n_x + lambda) * P, 'lower');
-
-% testing
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% tmp = schol( (n_x + lambda) * P);
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 X(:, 1) = m;
 for i = 1 : n_x
     X(:, i + 1) = m + tmp(:, i);

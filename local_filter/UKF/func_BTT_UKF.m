@@ -48,12 +48,13 @@ end
 
 %% local filter
 % initial estimate
-x0_UKF = zeros(nStates, 1);
-x0_UKF(1) = 230 * 1e3;
-x0_UKF(2) = 2300 * cosd(190);
-x0_UKF(3) = 90 * 1e3;
-x0_UKF(4) = 2300 * sind(190);
-P0_UKF = diag([1000^2, 20^2, 1000^2, 20^2]);
+% x0_UKF = zeros(nStates, 1);
+% x0_UKF(1) = 230 * 1e3;
+% x0_UKF(2) = 2300 * cosd(190);
+% x0_UKF(3) = 90 * 1e3;
+% x0_UKF(4) = 2300 * sind(190);
+x0_UKF = x0_tgt;
+P0_UKF = diag([100^2, 2^2, 100^2, 2^2]);
 x_UKF = zeros(nSteps, nStates);
 P_UKF = zeros(nSteps, nStates, nStates);
 % unscented Kalman filter

@@ -15,11 +15,11 @@ lambda = alpha^2 * (n_x + kappa) - n_x;
 L = 2 * n_x + 1;
 X = zeros(n_x, L);
 % calcualte X
-tmp = chol( (n_x + lambda) * P, 'lower');
+tmp = chol(P, 'lower');
 X(:, 1) = m;
 for i = 1 : n_x
-    X(:, i + 1) = m + tmp(:, i);
-    X(:, i + 1 + n_x) = m - tmp(:, i);
+    X(:, i + 1) = m + sqrt(n_x + lambda) * tmp(:, i);
+    X(:, i + 1 + n_x) = m - sqrt(n_x + lambda) * tmp(:, i);
 end
 
 %% calcualte W_m

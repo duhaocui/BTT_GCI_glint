@@ -1,4 +1,4 @@
-function [mse_px, mse_py] = func_BTT_UKF(dyn_param, meas_param, ut_param, DEMO_FLAG)
+function [mse_px, mse_py] = func_BTT_UKF(T, q, R, dyn_param, meas_param, ut_param, DEMO_FLAG)
 
 %% target
 % read dynamical parameters
@@ -6,8 +6,6 @@ g = dyn_param{1};
 beta_tgt = dyn_param{2};
 F = dyn_param{3};
 G = dyn_param{4};
-T = dyn_param{5};
-q = dyn_param{6};
 nSteps = 120 / T;
 Theta = [T^3 / 3, T^2 / 2; T^2 / 2, T];
 Q = q * blkdiag(Theta, Theta);
@@ -32,8 +30,6 @@ for i = 1 : nSteps
 end
 
 %% measurement
-% read measurement parameters
-R = meas_param{3};
 % initial measurement
 Z = zeros(nSteps, 2);
 % update measurement
@@ -72,12 +68,12 @@ for i = 1 : nSteps
     end
     % predict
     disp('predict')
-    [x_pred, P_pred] = func_UKF_predict(x_upd, P_upd, @func_BTT_dyn, dyn_param, ut_param);
+    [x_pred, P_pred] = func_UKF_predict(x_upd, P_upd, Q, @func_BTT_dyn, dyn_param, ut_param);
     
     % update
     disp('update')
     z = (Z(i, :) )';  
-    [x_upd, P_upd] = func_UKF_update(x_pred, P_pred, z, @func_rang_bear_meas, meas_param, ut_param);
+    [x_upd, P_upd] = func_UKF_update(x_pred, P_pred, z, R, @func_rang_bear_meas, meas_param, ut_param);
     
     % log
     x_UKF(i, :) = x_upd';

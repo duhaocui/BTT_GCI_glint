@@ -32,26 +32,22 @@ for i = 1 : nSteps
 end
 
 %% measurement
-% parameters
-sigma_r = meas_param{1};
-sigma_theta = meas_param{2};
-x_R = meas_param{3};
-y_R = meas_param{4};
+% read measurement parameters
+R = meas_param{3};
 % initial measurement
 Z = zeros(nSteps, 2);
 % update measurement
 for i = 1 : nSteps
     x = x_tgt(i, 1);
     y = x_tgt(i, 3);
-    pos = [x; y];
-    z = func_rang_bear_meas(pos, meas_param);
-    v_r = normrnd(0, sigma_r);
-    v_theta = normrnd(0, sigma_theta);
-    z_r = z(1) + v_r;
-    z_theta = z(2) + v_theta;
+    pos_tgt = [x; y];
+    z_true = func_rang_bear_meas(pos_tgt, meas_param);
+    % measurement noise 
+    v = (mvnrnd(zeros(2, 1), R) )';
+    % calculate measurement z
+    z = z_true + v;
     % log
-    Z(i, 1) = z_r;
-    Z(i, 2) = z_theta;
+    Z(i, :) = z';
 end
 
 %% local filter

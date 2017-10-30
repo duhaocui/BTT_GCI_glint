@@ -2,7 +2,7 @@ clear
 clc
 close all
 
-DEMO_FLAG = 0;
+DEMO_FLAG = 1;
 
 %% target parameters
 T = 2;
@@ -25,14 +25,14 @@ dyn_param{5} = T;
 dyn_param{6} = q;
 
 %% measurement parameters
-x_R = 0;
-y_R = 0;
-sigma_r = 100;
-sigma_theta = 0.05;
-meas_param{1} = sigma_r;
-meas_param{2} = sigma_theta;
-meas_param{3} = x_R;
-meas_param{4} = y_R;
+x_s = 0;
+y_s = 0;
+r_range = 10;
+r_theta = 0.05;
+R = diag([r_range^2, r_theta^2]);
+meas_param{1} = x_s;
+meas_param{2} = y_s;
+meas_param{3} = R;
 
 %% unscented transform parameters
 alpha = 1;

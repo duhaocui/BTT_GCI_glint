@@ -34,16 +34,14 @@ meas_param{2} = sigma_theta;
 meas_param{3} = x_R;
 meas_param{4} = y_R;
 
-%% UKF
-beta_UKF = beta_tgt;
-n_x = size(F, 1);
+%% unscented transform parameters
 alpha = 1;
 beta = 0;
 % kappa = 3 - n_x;
 kappa = 0;
-tr_param{1} = alpha;
-tr_param{2} = beta;
-tr_param{3} = kappa;
+ut_param{1} = alpha;
+ut_param{2} = beta;
+ut_param{3} = kappa;
 
 %% main function
-[mse_px, mse_py] = func_BTT_UKF(dyn_param, meas_param, tr_param, DEMO_FLAG);
+[mse_px, mse_py] = func_BTT_UKF(dyn_param, meas_param, ut_param, DEMO_FLAG);

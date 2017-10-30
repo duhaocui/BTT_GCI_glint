@@ -1,4 +1,4 @@
-function [mse_px, mse_py] = func_BTT_UKF(dyn_param, meas_param, tr_param, DEMO_FLAG)
+function [mse_px, mse_py] = func_BTT_UKF(dyn_param, meas_param, ut_param, DEMO_FLAG)
 
 %% target
 % read dynamical parameters
@@ -76,12 +76,12 @@ for i = 1 : nSteps
     end
     % predict
     disp('predict')
-    [x_pred, P_pred] = func_UKF_predict(x_upd, P_upd, @func_BTT_dyn, dyn_param, tr_param);
+    [x_pred, P_pred] = func_UKF_predict(x_upd, P_upd, @func_BTT_dyn, dyn_param, ut_param);
     
     % update
     disp('update')
     z = (Z(i, :) )';  
-    [x_upd, P_upd] = func_UKF_update(x_pred, P_pred, z, @func_rang_bear_meas, meas_param, tr_param);
+    [x_upd, P_upd] = func_UKF_update(x_pred, P_pred, z, @func_rang_bear_meas, meas_param, ut_param);
     
     % log
     x_UKF(i, :) = x_upd';

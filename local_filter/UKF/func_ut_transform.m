@@ -1,4 +1,4 @@
-function [m_tfr, P_tfr, P_cov_tfr] = func_ut_transform(m, P, func_handle, func_param, tr_param)
+function [m_tfr, P_tfr, P_cov_tfr] = func_ut_transform(m, P, func_handle, func_param, ut_param)
 % input:
 %           m - mean 
 %           P - covariance
@@ -12,7 +12,7 @@ function [m_tfr, P_tfr, P_cov_tfr] = func_ut_transform(m, P, func_handle, func_p
 %   P_cov_tfr - transformed cross-covariance of x and y 
 
 % construct sigma points
-[X, W_m, W_c] = func_constr_sigma(m, P, tr_param);
+[X, W_m, W_c] = func_constr_sigma(m, P, ut_param);
 
 % calculate `Y` (propagate through the nonlinear function `g`)
 if ischar(func_handle) || isa(func_handle,'function_handle')

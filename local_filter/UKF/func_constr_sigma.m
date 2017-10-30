@@ -1,11 +1,11 @@
-function [X, W_m, W_c] = func_constr_sigma(m, P, tr_param)
+function [X, W_m, W_c] = func_constr_sigma(m, P, ut_param)
 % ref. [1]: Gaussian sum unscented kalman filter with adaptive scaling parameters
 % ref. [2]: Radar data processing with applications (He You), P72
 
 n_x = length(m);
-alpha = tr_param{1};
-beta = tr_param{2};
-kappa = tr_param{3};
+alpha = ut_param{1};
+beta = ut_param{2};
+kappa = ut_param{3};
 
 % calculate lambda
 lambda = alpha^2 * (n_x + kappa) - n_x;

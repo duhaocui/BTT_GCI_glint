@@ -1,11 +1,11 @@
-function [m_pred, P_pred] = func_UKF_predict(m, P, func_handle, dyn_param, tr_param)
+function [m_pred, P_pred] = func_UKF_predict(m, P, func_handle, dyn_param, ut_param)
 
 T = dyn_param{5};
 q = dyn_param{6};
 Theta = [T^3 / 3, T^2 / 2; T^2 / 2, T];
 Q = q * blkdiag(Theta, Theta);
 
-[m_tfr, P_tfr] = func_ut_transform(m, P, func_handle, dyn_param, tr_param);
+[m_tfr, P_tfr] = func_ut_transform(m, P, func_handle, dyn_param, ut_param);
 
 % testing
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%

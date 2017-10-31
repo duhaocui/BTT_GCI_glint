@@ -101,7 +101,7 @@ for i = 1 : N_upd
         k = k + 1;
     end
 end
-assert(sum(p_pred(:) ) == 1 )
+assert(abs(sum(p_pred(:) ) - 1) < 1e-2)
 % construct Gaussian mixture model
 gm_pred = gmdistribution(x_pred, P_pred, p_pred);
 

@@ -84,3 +84,31 @@ for i = 1 : nSteps
     % log
     gm_cell{i} = gm_upd; 
 end
+
+%% calculate MSE
+% calculate `x_GSF`
+x_GSF = zeros(nSteps, nStates);
+for i = 1 : nSteps
+    gm = gm_cell{i};
+    x_GSF(i, :) = gm.ComponentProportion * gm.mu;
+end
+error = x_tgt - x_GSF;
+error_px = error(:, 1);
+error_py = error(:, 3);
+mse_px = error_px .* error_px;
+mse_py = error_py .* error_py;
+
+%% plot
+if DEMO_FLAG == 1
+    % plot estimation error
+    figure
+    plot(T * (1 : nSteps), abs(error_px) )
+    xlabel('time (s)')
+    ylabel('estimation error in X (absolute value)')
+    grid on
+    figure
+    plot(T * (1 : nSteps), abs(error_py) )
+    ylabel('estimation error in Y (absolute value)')
+    xlabel('time (s)')
+    grid on
+end

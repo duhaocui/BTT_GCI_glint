@@ -2,7 +2,7 @@ clear
 clc
 close all
 
-DEMO_FLAG = 0;
+DEMO_FLAG = 1;
 
 %% target parameters
 T = 2;

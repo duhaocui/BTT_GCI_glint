@@ -36,12 +36,14 @@ for i = 1 : N_pred
    
 end
 
-%% Step 3: calculate `z_pred_i`, `P_xz_pred_i` and `P_z_pred_ij` based on `sigmas_ut(i)`, `sigma_pred(i)`, construct `z_pred_cell`, `P_xz_pred_cell` and `P_z_pred_cell`
+%% Step 3: calculate `z_pred_i`, `P_xz_pred_i`, `P_z_pred_ij` and `phi_z`
+ % based on `sigmas_ut(i)`, `sigma_pred(i)`, construct `z_pred_cell`, `P_xz_pred_cell` and `P_z_pred_cell`
 % initial
 L = length(sigmas_pred(1).W_m);
 z_pred_cell = cell(N_pred, 1);
 P_xz_pred_cell = cell(N_pred, 1);
 P_z_pred_cell = cell(N_pred, N_v);
+phi_z = zeros(N_pred, N_v);
 % calculate `z_pred_i`, `P_xz_pred_i` and `P_z_pred_ij`
 for i = 1 : N_pred
     Z_ut = sigmas_ut(i).X;
@@ -79,10 +81,76 @@ for i = 1 : N_pred
         end
         P_z_pred_cell{i, j} = P_z_pred_ij;
     end
-    
+    % calculate `phi_z`
+    for j = 1 : N_v
+        phi_z(i, j) = mvnpdf(z, z_pred_cell{i}, P_z_pred_cell{i, j});
+    end
 end
 
+%% Step 4: unscented Kalman filtering (update phase)
+x_upd_cell = cell(N_pred, N_v);
+P_upd_cell = cell(N_pred, N_v);
+for i = 1 : N_pred
+    x_pred_i = (gm_pred.mu(i, :) )';
+    z_pred_i = z_pred_cell{i};
+    P_pred_i = gm_pred.Sigma(:, :, i);
+    for j = 1 : N_v
+        K = P_xz_pred_cell{i} / P_z_pred_cell{i, j};
+        x_upd_ij = x_pred_i + K * (z - z_pred_i);
+        P_upd_ij = P_pred_i - K * P_z_pred_cell{i, j} * K';
+        % log
+        x_upd_cell{i, j} = x_upd_ij;
+        P_upd_cell{i, j} = P_upd_ij;
+    end
+end
 
-%% Step 4:
+%% Step 5: construct Gaussian mixture model `gm_upd`
+% mean
+for i = 1 : N_pred
+    for j = 1 : N_v
+        if i == 1 && j == 1
+            x_upd = (x_upd_cell{i, j})';
+        else
+            x_upd = [x_upd; (x_upd_cell{i, j})'];
+        end
+    end
+end
+assert(size(x_upd, 1) == N_pred * N_v)
+% covariance
+for i = 1 : N_pred
+    for j = 1 : N_v
+        if i == 1 && j == 1
+            P_upd = P_upd_cell{i, j};
+        else
+            P_upd = cat(3, P_upd, P_upd_cell{i, j});
+        end
+    end
+end
+assert(size(P_upd, 3) == N_pred * N_v)
+% weight
+k = 1;
+p_upd = zeros(1, N_pred * N_v);
+for i = 1 : N_pred
+    for j = 1 : N_v
+        p_upd(k) = gm_pred.ComponentProportion(i) * gm_v.ComponentProportion(j) * phi_z(i, j);
+        k = k + 1;
+    end
+end
+p_upd = p_upd / sum(p_upd(:) );
+assert(abs(sum(p_upd(:) ) - 1) < 1e-2 )
+% prune
+elim_threshold = 1e-5;
+w_old = p_upd';
+x_old = x_upd';
+P_old = P_upd;
+[w_new, x_new, P_new]= gaus_prune(w_old, x_old, P_old, elim_threshold);
+w_new = w_new / sum(w_new(:) );
+assert(abs(sum(w_new(:) ) - 1) < 1e-2)
+% construct Gaussian mixture model
+gm_upd = gmdistribution(x_new', P_new, w_new');
 
-%% Step 5:
+%% Step 6: Gaussian mixture management
+% merge
+gm_upd = gm_merge(gm_upd);
+% cap
+gm_upd = gm_cap(gm_upd);

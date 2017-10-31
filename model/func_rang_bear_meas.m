@@ -7,6 +7,7 @@ x_s = meas_param{1};
 y_s = meas_param{2};
 
 z_range = sqrt( (x - x_s)^2 + (y - y_s)^2);
+
 z_theta = atan2( (y - y_s), (x - x_s) );
 
 z = zeros(2, 1);

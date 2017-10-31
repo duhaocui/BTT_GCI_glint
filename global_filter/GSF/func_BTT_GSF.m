@@ -76,11 +76,11 @@ for i = 1 : nSteps
     end
     % predict
     disp('predict')
-    gm_pred = func_GSF_predict(gm_upd, @func_BTT_dyn, dyn_param, ut_param);
+    gm_pred = func_GSF_predict(gm_upd, gm_w, @func_BTT_dyn, dyn_param, ut_param);
     % update
     disp('update')
     z = (Z(i, :) )';
-    gm_upd = func_GSF_update(gm_pred, z, @func_rang_bear_meas, meas_param, ut_param);
+    gm_upd = func_GSF_update(gm_pred, z, gm_v, @func_rang_bear_meas, meas_param, ut_param);
     % log
     gm_cell{i} = gm_upd; 
 end

@@ -21,10 +21,10 @@ for i = 1 : N_pred
     W_m_ut = sigma_tmp.W_m;
     W_c_ut = sigma_tmp.W_c;
     
-    X_ut = func_ut_transform(sigma_tmp.X, func_handle, meas_param);
+    X_ut_i = func_ut_transform(sigma_tmp.X, func_handle, meas_param);
     
     sigma_ut = struct;
-    sigma_ut.X = X_ut;
+    sigma_ut.X = X_ut_i;
     sigma_ut.W_m = W_m_ut;
     sigma_ut.W_c = W_c_ut;
     
@@ -33,39 +33,38 @@ for i = 1 : N_pred
     else
         sigmas_ut = [sigmas_ut; sigma_ut];
     end
-   
 end
 
 %% Step 3: calculate `z_pred_i`, `P_xz_pred_i`, `P_z_pred_ij` and `phi_z`
- % based on `sigmas_ut(i)`, `sigma_pred(i)`, construct `z_pred_cell`, `P_xz_pred_cell` and `P_z_pred_cell`
+% based on `sigmas_ut(i)`, `sigma_pred(i)`, construct `z_pred_cell`, `P_xz_pred_cell` and `P_z_pred_cell`
 % initial
 L = length(sigmas_pred(1).W_m);
 z_pred_cell = cell(N_pred, 1);
 P_xz_pred_cell = cell(N_pred, 1);
 P_z_pred_cell = cell(N_pred, N_v);
 phi_z = zeros(N_pred, N_v);
-% calculate `z_pred_i`, `P_xz_pred_i` and `P_z_pred_ij`
+% calculate `z_pred_i`, `P_xz_pred_i`, `P_z_pred_ij` and `phi_z`
 for i = 1 : N_pred
-    Z_ut = sigmas_ut(i).X;
-    X_pred = sigmas_pred(i).X;
+    Z_ut_i = sigmas_ut(i).X;
+    X_pred_i = sigmas_pred(i).X;
     W_m = sigmas_ut(i).W_m;
     W_c = sigmas_ut(i).W_c;
     x_pred_i = (gm_pred.mu(i, :) )';
     % calculate `z_pred_i`
     for l = 1 : L
         if l == 1
-            z_pred_i = W_m(l) * Z_ut(:, l);
+            z_pred_i = W_m(l) * Z_ut_i(:, l);
         else
-            z_pred_i = z_pred_i + W_m(l) * Z_ut(:, l);
+            z_pred_i = z_pred_i + W_m(l) * Z_ut_i(:, l);
         end
     end
     z_pred_cell{i} = z_pred_i;
     % calculate `P_xz_pred_i`
     for l = 1 : L
         if l == 1
-            P_xz_pred_i = W_c(l) * (X_pred(:, l) - x_pred_i) * (Z_ut(:, l) - z_pred_i)'; 
+            P_xz_pred_i = W_c(l) * (X_pred_i(:, l) - x_pred_i) * (Z_ut_i(:, l) - z_pred_i)'; 
         else
-            P_xz_pred_i = P_xz_pred_i + W_c(l) * (X_pred(:, l) - x_pred_i) * (Z_ut(:, l) - z_pred_i)'; 
+            P_xz_pred_i = P_xz_pred_i + W_c(l) * (X_pred_i(:, l) - x_pred_i) * (Z_ut_i(:, l) - z_pred_i)'; 
         end
     end
     P_xz_pred_cell{i} = P_xz_pred_i;
@@ -74,11 +73,12 @@ for i = 1 : N_pred
         R_j = gm_v.Sigma(:, :, j);
         for l = 1 : L
             if l == 1
-                P_z_pred_ij = W_c(l) * (Z_ut(:, l) - z_pred_i) * (Z_ut(:, l) - z_pred_i)' + R_j;
+                P_z_pred_ij = W_c(l) * (Z_ut_i(:, l) - z_pred_i) * (Z_ut_i(:, l) - z_pred_i)';
             else
-                P_z_pred_ij = P_z_pred_ij + W_c(l) * (Z_ut(:, l) - z_pred_i) * (Z_ut(:, l) - z_pred_i)' + R_j;
+                P_z_pred_ij = P_z_pred_ij + W_c(l) * (Z_ut_i(:, l) - z_pred_i) * (Z_ut_i(:, l) - z_pred_i)';
             end
         end
+        P_z_pred_ij = P_z_pred_ij + R_j;
         P_z_pred_cell{i, j} = P_z_pred_ij;
     end
     % calculate `phi_z`
@@ -136,7 +136,7 @@ for i = 1 : N_pred
         k = k + 1;
     end
 end
-p_upd = p_upd / sum(p_upd(:) );
+p_upd = p_upd / sum(p_upd);
 assert(abs(sum(p_upd(:) ) - 1) < 1e-2 )
 % prune
 elim_threshold = 1e-5;
@@ -144,8 +144,8 @@ w_old = p_upd';
 x_old = x_upd';
 P_old = P_upd;
 [w_new, x_new, P_new]= gaus_prune(w_old, x_old, P_old, elim_threshold);
-w_new = w_new / sum(w_new(:) );
-assert(abs(sum(w_new(:) ) - 1) < 1e-2)
+w_new = w_new / sum(w_new);
+assert(abs(sum(w_new) - 1) < 1e-2)
 % construct Gaussian mixture model
 gm_upd = gmdistribution(x_new', P_new, w_new');
 

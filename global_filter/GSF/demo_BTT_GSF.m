@@ -33,7 +33,7 @@ assert(length(q) == 2)
 x_s = 0;
 y_s = 0;
 r_range = [10; 1];
-r_theta = [0.05; 0.005];
+r_theta = [0.5; 0.1];
 R_cell = cell(2, 1);
 R_cell{1} = diag([(r_range(1) )^2, (r_theta(1) )^2]);
 R_cell{2} = diag([(r_range(2) )^2, (r_theta(2) )^2]);

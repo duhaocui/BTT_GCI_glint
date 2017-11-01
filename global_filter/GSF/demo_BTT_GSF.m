@@ -7,7 +7,7 @@ DEMO_FLAG = 1;
 %% target parameters
 T = 2;
 Theta = [T^3 / 3, T^2 / 2; T^2 / 2, T];
-q = [1; 0.01];
+q = [1; 100];
 Q_cell = cell(2, 1);
 Q_cell{1} = q(1) * blkdiag(Theta, Theta);
 Q_cell{2} = q(2) * blkdiag(Theta, Theta);
@@ -47,7 +47,7 @@ assert(length(r_theta) == 2)
 alpha = 1;
 beta = 0;
 % kappa = 3 - n_x;
-kappa = 0;
+kappa = 1;
 ut_param{1} = alpha;
 ut_param{2} = beta;
 ut_param{3} = kappa;

@@ -21,10 +21,10 @@ for i = 1 : N_upd
     W_m_ut = sigma_tmp.W_m;
     W_c_ut = sigma_tmp.W_c;
     
-    X_ut = func_ut_transform(sigma_tmp.X, func_handle, dyn_param);
+    X_ut_i = func_ut_transform(sigma_tmp.X, func_handle, dyn_param);
     
     sigma_ut = struct;
-    sigma_ut.X = X_ut;
+    sigma_ut.X = X_ut_i;
     sigma_ut.W_m = W_m_ut;
     sigma_ut.W_c = W_c_ut;
     
@@ -43,15 +43,15 @@ x_pred_cell = cell(N_upd, 1);
 P_pred_cell = cell(N_upd, N_w);
 % calculate `x_pred_i` and `P_pred_ij`
 for i = 1 : N_upd
-    X_ut = sigmas_ut(i).X;
+    X_ut_i = sigmas_ut(i).X;
     W_m = sigmas_ut(i).W_m;
     W_c = sigmas_ut(i).W_c;
     % calculate `x_pred_i`
     for l = 1 : L
         if l == 1
-            x_pred_i = W_m(l) * X_ut(:, l);
+            x_pred_i = W_m(l) * X_ut_i(:, l);
         else
-            x_pred_i = x_pred_i + W_m(l) * X_ut(:, l);
+            x_pred_i = x_pred_i + W_m(l) * X_ut_i(:, l);
         end
     end
     x_pred_cell{i} = x_pred_i;
@@ -60,11 +60,12 @@ for i = 1 : N_upd
         Q_j = gm_w.Sigma(:, :, j);
         for l = 1 : L
             if l == 1
-                P_pred_ij = W_c(l) * (X_ut(:, l)- x_pred_i) * (X_ut(:, l)- x_pred_i)' + Q_j;
+                P_pred_ij = W_c(l) * (X_ut_i(:, l)- x_pred_i) * (X_ut_i(:, l)- x_pred_i)';
             else
-                P_pred_ij = P_pred_ij + W_c(l) * (X_ut(:, l)- x_pred_i) * (X_ut(:, l)- x_pred_i)' + Q_j;
+                P_pred_ij = P_pred_ij + W_c(l) * (X_ut_i(:, l)- x_pred_i) * (X_ut_i(:, l)- x_pred_i)';
             end
         end
+        P_pred_ij = P_pred_ij + Q_j;
         P_pred_cell{i, j} = P_pred_ij;
     end  
 end
@@ -104,5 +105,3 @@ end
 assert(abs(sum(p_pred(:) ) - 1) < 1e-2)
 % construct Gaussian mixture model
 gm_pred = gmdistribution(x_pred, P_pred, p_pred);
-
-%% Step 5: Gaussian mixture reduction (TODO)

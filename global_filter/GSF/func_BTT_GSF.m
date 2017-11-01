@@ -58,10 +58,10 @@ end
 % initial filtering estimate (2 Gaussian mixtures, size(F, 1) states)
 x0 = zeros(2, size(F, 1) );
 x0(1, :) = [230 * 1e3, 2300 * cosd(190), 90 * 1e3, 2300 * sind(190)];
-x0(2, :) = [240 * 1e3, 2200 * cosd(190), 100 * 1e3, 2200 * sind(190)];
+x0(2, :) = [24 * 1e3, 220 * cosd(190), 10 * 1e3, 220 * sind(190)];
 P0_cell = cell(2, 1);
 P0_cell{1} = diag([1000^2, 20^2, 1000^2, 20^2]);
-P0_cell{2} = diag([1100^2, 15^2, 900^2, 15^2]);
+P0_cell{2} = diag([1500^2, 15^2, 500^2, 25^2]);
 P0 = cat(3, P0_cell{1}, P0_cell{2});
 gm0 = gmdistribution(x0, P0, [0.6, 0.4]);
 % initial filtering log

@@ -1,4 +1,4 @@
-function gm_upd = func_GSF_update(gm_pred, z, gm_v, func_handle, meas_param, ut_param)
+function gm_upd = func_GSF_update(gm_pred, z, gm_v, func_handle, meas_param, ut_param, step_curr)
 
 N_pred = gm_pred.NumComponents;
 N_v = gm_v.NumComponents;
@@ -148,6 +148,10 @@ w_new = w_new / sum(w_new);
 assert(abs(sum(w_new) - 1) < 1e-2)
 % construct Gaussian mixture model
 gm_upd = gmdistribution(x_new', P_new, w_new');
+
+if step_curr == 40
+    save('gm_upd.mat', 'gm_upd');
+end
 
 %% Step 6: Gaussian mixture management
 % merge

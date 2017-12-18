@@ -80,7 +80,7 @@ for i = 1 : nSteps
     % update
     disp('update')
     z = (Z(i, :) )';
-    gm_upd = func_GSF_update(gm_pred, z, gm_v, @func_rang_bear_meas, meas_param, ut_param);
+    gm_upd = func_GSF_update(gm_pred, z, gm_v, @func_rang_bear_meas, meas_param, ut_param, i);
     % log
     gm_cell{i} = gm_upd; 
 end

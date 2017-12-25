@@ -76,5 +76,13 @@ p_power = zeros(gm.NumComponents, 1);
 for i = 1 : gm.NumComponents
     p_power(i) = beta(i) / sum(beta);
 end
-assert(abs(sum(p_power) - 1) < 1e-1)
-gm_power = gmdistribution(mu_power, sigma_power, p_power);
+% prune
+elim_threshold = 1e-5;
+p_power_old = p_power;
+mu_power_old = mu_power';
+sigma_power_old = sigma_power;
+[p_power_new, mu_power_new, sigma_power_new]= gaus_prune(p_power_old, mu_power_old, sigma_power_old, elim_threshold);
+p_power_new = p_power_new / sum(p_power_new);
+assert(abs(sum(p_power_new) - 1) < 1e-1)
+% construct Gaussian mixture model
+gm_power = gmdistribution(mu_power_new', sigma_power_new, p_power_new');
